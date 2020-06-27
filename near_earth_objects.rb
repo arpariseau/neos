@@ -8,25 +8,25 @@ Figaro.load
 
 class NearEarthObjects
   def self.find_neos_by_date(date)
-    @date = date
+    neo = NearEarthObjects.new(date)
     {
-      asteroid_list: self.format_asteroid_data,
-      biggest_asteroid: self.largest_asteroid_diameter,
-      total_number_of_asteroids: self.total_number_of_asteroids
+      asteroid_list: neo.format_asteroid_data,
+      biggest_asteroid: neo.largest_asteroid_diameter,
+      total_number_of_asteroids: neo.total_number_of_asteroids
     }
   end
 
-  def self.parse_asteroid_data
+  def initialize(date)
     conn = Faraday.new(
       url: 'https://api.nasa.gov',
-      params: { start_date: @date, api_key: ENV['nasa_api_key']}
+      params: { start_date: date, api_key: ENV['nasa_api_key']}
     )
     asteroids_list_data = conn.get('/neo/rest/v1/feed')
-    JSON.parse(asteroids_list_data.body, symbolize_names: true)[:near_earth_objects][:"#{@date}"]
+    @parsed_asteroid_data = JSON.parse(asteroids_list_data.body, symbolize_names: true)[:near_earth_objects][:"#{date}"]
   end
 
-  def self.format_asteroid_data
-    parse_asteroid_data.map do |asteroid|
+  def format_asteroid_data
+    @parsed_asteroid_data.map do |asteroid|
       {
         name: asteroid[:name],
         diameter: "#{asteroid[:estimated_diameter][:feet][:estimated_diameter_max].to_i} ft",
@@ -35,14 +35,14 @@ class NearEarthObjects
     end
   end
 
-  def self.largest_asteroid_diameter
-    parse_asteroid_data.map do |asteroid|
+  def largest_asteroid_diameter
+    @parsed_asteroid_data.map do |asteroid|
       asteroid[:estimated_diameter][:feet][:estimated_diameter_max].to_i
     end.max { |a,b| a<=> b}
   end
 
-  def self.total_number_of_asteroids
-    parse_asteroid_data.count
+  def total_number_of_asteroids
+    @parsed_asteroid_data.count
   end
 
 end
