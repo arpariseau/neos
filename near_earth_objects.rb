@@ -7,14 +7,14 @@ Figaro.application = Figaro::Application.new(environment: 'production', path: Fi
 Figaro.load
 
 class NearEarthObjects
-  def self.find_neos_by_date(date)
-    neo = NearEarthObjects.new(date)
-    {
-      asteroid_list: neo.format_asteroid_data,
-      biggest_asteroid: neo.largest_asteroid_diameter,
-      total_number_of_asteroids: neo.total_number_of_asteroids
-    }
-  end
+  # def self.find_neos_by_date(date)
+  #   neo = NearEarthObjects.new(date)
+  #   {
+  #     asteroid_list: neo.format_asteroid_data,
+  #     biggest_asteroid: neo.largest_asteroid_diameter,
+  #     total_number_of_asteroids: neo.total_number_of_asteroids
+  #   }
+  # end
 
   def initialize(date)
     conn = Faraday.new(
