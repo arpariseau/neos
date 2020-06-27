@@ -18,12 +18,11 @@ class NEOTablemaker
   end
 
   def format_row_data(row_data, column_info)
-    row = row_data.keys.map { |key| row_data[key].ljust(column_info[key][:width]) }.join(' | ')
-    puts "| #{row} |"
+    row_data.keys.map { |key| row_data[key].ljust(column_info[key][:width]) }.join(' | ')
   end
 
   def create_rows(asteroid_data, column_info)
-    asteroid_data.each { |asteroid| format_row_data(asteroid, column_info) }
+    asteroid_data.each { |asteroid| puts "| #{format_row_data(asteroid, column_info)} |" }
   end
 
 end
